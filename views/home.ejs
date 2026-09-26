@@ -1,0 +1,116 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+    <div class="spider-web spider-web-top" aria-hidden="true"></div>
+    <span class="hero-ghost" aria-hidden="true">👻</span>
+    <div class="container hero-grid">
+        <div class="hero-content">
+            <span class="eyebrow">🎃 Mùa lễ hội ngọt ngào đã đến</span>
+            <h1>Chạm vào thế giới <span>Halloween</span></h1>
+            <p>Khám phá bánh kẹo thơm ngon, hộp quà ma mị và những sắc màu đen cam dành riêng cho đêm hội.</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="/products">Mua ngay <span aria-hidden="true">→</span></a>
+                <a class="btn btn-secondary" href="#san-pham">Xem sản phẩm hot</a>
+            </div>
+            <div class="hero-stats" aria-label="Thành tựu SweetShop">
+                <div><strong>100+</strong><span>Món ngon</span></div>
+                <div><strong>4.9/5</strong><span>Khách yêu thích</span></div>
+                <div><strong>30'</strong><span>Giao nhanh</span></div>
+            </div>
+        </div>
+
+        <div class="hero-visual" aria-label="Hộp bánh kẹo SweetShop đầy màu sắc">
+            <span class="floating-candy candy-one">🦇</span>
+            <span class="floating-candy candy-two">🍪</span>
+            <span class="floating-candy candy-three">🎃</span>
+            <div class="hero-circle">
+                <div class="gift-box">
+                    <div class="gift-lid"><span></span></div>
+                    <div class="gift-body">
+                        <span class="gift-candy candy-pink">●</span>
+                        <span class="gift-candy candy-yellow">★</span>
+                        <span class="gift-candy candy-choco">●</span>
+                        <span class="gift-candy candy-white">♥</span>
+                        <strong>Sweet<br>Box</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="happy-badge"><span>✦</span> Kẹo hay bị ghẹo?</div>
+        </div>
+    </div>
+    <div class="hero-wave" aria-hidden="true"></div>
+</section>
+
+<% if (typeof dataNotice === 'string' && dataNotice) { %>
+    <div class="container demo-notice" role="status">⚠ <%= dataNotice %></div>
+<% } %>
+
+<section class="benefits section" id="uu-diem">
+    <div class="container">
+        <div class="section-heading">
+            <span class="section-kicker">SweetShop có gì đặc biệt?</span>
+            <h2>Ngọt từ hương vị, trọn từ dịch vụ</h2>
+        </div>
+        <div class="benefit-grid">
+            <article class="benefit-card">
+                <span class="benefit-icon icon-pink">✦</span>
+                <div><h3>Tươi ngon mỗi ngày</h3><p>Sản phẩm được chọn lọc kỹ, đảm bảo hương vị và chất lượng.</p></div>
+            </article>
+            <article class="benefit-card">
+                <span class="benefit-icon icon-yellow">⚡</span>
+                <div><h3>Giao hàng nhanh</h3><p>Đóng gói cẩn thận, giao tận tay để món ngon luôn hoàn hảo.</p></div>
+            </article>
+            <article class="benefit-card">
+                <span class="benefit-icon icon-purple">♡</span>
+                <div><h3>Quà tặng tinh tế</h3><p>Những hộp quà xinh xắn dành cho mọi dịp và người bạn yêu thương.</p></div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="products section" id="san-pham">
+    <div class="container">
+        <div class="section-heading heading-row">
+            <div><span class="section-kicker">Bộ sưu tập được yêu thích</span><h2>Sản phẩm nổi bật</h2></div>
+            <a class="view-all" href="#">Xem tất cả <span aria-hidden="true">→</span></a>
+        </div>
+        <% if (featuredProducts.length) { %>
+            <div class="product-grid">
+                <% featuredProducts.forEach((product, index) => { %>
+                    <article class="product-card">
+                        <div class="product-image product-tone-<%= (index % 4) + 1 %>">
+                            <div class="product-badges"><span class="product-label badge-hot"><%= product.isHot ? 'Hot' : 'Mới' %></span></div>
+                            <span class="product-emoji" role="img" aria-label="<%= product.name %>"><%= product.image %></span>
+                            <span class="card-bat" aria-hidden="true">🦇</span>
+                        </div>
+                        <div class="product-info">
+                            <span class="category"><%= product.categoryId?.name || 'SweetShop' %></span>
+                            <h3><%= product.name %></h3>
+                            <div class="rating" aria-label="Đánh giá <%= product.rating %> trên 5">★ <%= Number(product.rating || 0).toFixed(1) %> <span>• <%= product.soldCount || 0 %> đã bán</span></div>
+                            <div class="product-bottom">
+                                <strong><%= product.price.toLocaleString('vi-VN') %>đ</strong>
+                                <form action="/cart/add" method="post">
+                                    <input type="hidden" name="productId" value="<%= product._id %>">
+                                    <button class="add-cart" type="submit">Thêm vào giỏ</button>
+                                </form>
+                            </div>
+                            <a class="product-detail-link" href="/products/<%= product.slug %>">Xem chi tiết →</a>
+                        </div>
+                    </article>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="empty-state"><span>🎃</span><p>Sản phẩm nổi bật đang được chuẩn bị.</p></div>
+        <% } %>
+    </div>
+</section>
+
+<section class="sweet-banner">
+    <div class="container banner-content">
+        <span class="banner-emoji" aria-hidden="true">🎃</span>
+        <div><span class="section-kicker">Một món quà, ngàn yêu thương</span><h2>Chọn hộp quà ngọt ngào cho người bạn thương</h2></div>
+        <a class="btn btn-light" href="/products?category=qua-halloween">Khám phá ngay</a>
+    </div>
+</section>
+
+<%- include('partials/footer') %>

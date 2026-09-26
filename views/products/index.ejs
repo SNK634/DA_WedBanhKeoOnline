@@ -1,0 +1,121 @@
+<%- include('../partials/header') %>
+
+<section class="page-hero compact-hero">
+    <div class="spider-web spider-web-top" aria-hidden="true"></div>
+    <div class="container">
+        <span class="page-hero-icon" aria-hidden="true">🦇</span>
+        <span class="section-kicker">Kho báu của SweetShop</span>
+        <h1>Sản phẩm Halloween</h1>
+        <p>Chọn món ngọt yêu thích cho bữa tiệc thêm phần ma mị.</p>
+    </div>
+</section>
+
+<% if (typeof dataNotice === 'string' && dataNotice) { %>
+    <div class="container demo-notice" role="status">⚠ <%= dataNotice %></div>
+<% } %>
+
+<section class="section products-page">
+    <div class="container">
+        <nav class="category-filters" aria-label="Lọc theo danh mục">
+            <a class="<%= !selectedCategory ? 'active' : '' %>" href="/products">Tất cả</a>
+            <% categories.forEach((category) => { %>
+                <a class="<%= selectedCategory === category.slug ? 'active' : '' %>" href="/products?category=<%= category.slug %>"><%= category.name %></a>
+            <% }) %>
+        </nav>
+
+        <form class="product-toolbar" action="/products" method="get">
+            <% if (selectedCategory) { %><input type="hidden" name="category" value="<%= selectedCategory %>"><% } %>
+            <label class="search-box" for="product-search">
+                <span aria-hidden="true">⌕</span>
+                <input id="product-search" name="q" type="search" value="<%= searchQuery %>" placeholder="Tìm theo tên sản phẩm...">
+            </label>
+            <label class="sort-box" for="product-sort">
+                <span>Sắp xếp</span>
+                <select id="product-sort" name="sort" onchange="this.form.submit()">
+                    <option value="featured" <%= sortOption === 'featured' ? 'selected' : '' %>>Nổi bật</option>
+                    <option value="price-asc" <%= sortOption === 'price-asc' ? 'selected' : '' %>>Giá tăng dần</option>
+                    <option value="price-desc" <%= sortOption === 'price-desc' ? 'selected' : '' %>>Giá giảm dần</option>
+                    <option value="best-selling" <%= sortOption === 'best-selling' ? 'selected' : '' %>>Bán chạy</option>
+                    <option value="rating" <%= sortOption === 'rating' ? 'selected' : '' %>>Đánh giá cao</option>
+                </select>
+            </label>
+            <button class="btn-card btn-orange toolbar-button" type="submit">Tìm kiếm</button>
+        </form>
+
+        <section class="best-seller-section" aria-labelledby="best-seller-title">
+            <div class="section-heading heading-row catalogue-heading">
+                <div><span class="section-kicker">Được yêu thích nhất</span><h2 id="best-seller-title">Sản phẩm bán chạy</h2></div>
+                <span class="leaderboard-note">Top <%= bestSellers.length %> theo lượt bán</span>
+            </div>
+            <div class="product-grid bestseller-grid">
+                <% bestSellers.forEach((product, index) => { %>
+                    <article class="product-card">
+                        <div class="product-image product-tone-<%= (index % 4) + 1 %>">
+                            <div class="product-badges"><span class="product-label badge-best">Bán chạy</span><% if (product.isHot) { %><span class="product-label badge-hot">Hot</span><% } %></div>
+                            <span class="product-emoji" role="img" aria-label="<%= product.name %>"><%= product.image %></span>
+                            <span class="card-bat" aria-hidden="true">🦇</span>
+                        </div>
+                        <div class="product-info">
+                            <span class="category"><%= product.categoryId?.name || 'SweetShop' %></span>
+                            <h3 title="<%= product.name %>"><%= product.name %></h3>
+                            <p class="product-excerpt"><%= product.shortDescription || product.description %></p>
+                            <div class="product-stats"><span class="rating-score">★ <%= Number(product.rating || 0).toFixed(1) %> <small>(<%= product.reviewCount || 0 %>)</small></span><span class="sold-count"><%= (product.soldCount || 0).toLocaleString('vi-VN') %> đã bán</span></div>
+                            <div class="product-bottom"><strong><%= product.price.toLocaleString('vi-VN') %>đ</strong><span class="stock">Còn <%= product.stock %></span></div>
+                            <div class="product-actions"><a class="btn-card btn-outline" href="/products/<%= product.slug %>">Xem chi tiết</a><form action="/cart/add" method="post"><input type="hidden" name="productId" value="<%= product._id %>"><button class="btn-card btn-orange" type="submit">Thêm vào giỏ</button></form></div>
+                        </div>
+                    </article>
+                <% }) %>
+            </div>
+        </section>
+
+        <div class="section-heading heading-row catalogue-heading all-products-heading">
+            <div>
+                <span class="section-kicker"><%= selectedCategory ? 'Danh mục đang chọn' : 'Toàn bộ cửa hàng' %></span>
+                <h2><%= selectedCategory ? (categories.find((category) => category.slug === selectedCategory)?.name || 'Sản phẩm') : 'Tất cả sản phẩm' %></h2>
+            </div>
+            <span class="result-count"><%= products.length %> sản phẩm</span>
+        </div>
+
+        <% if (products.length) { %>
+            <div class="product-grid product-list-grid">
+                <% products.forEach((product, index) => { %>
+                    <article class="product-card">
+                        <div class="product-image product-tone-<%= (index % 4) + 1 %>">
+                            <div class="product-badges">
+                                <% if (product.isBestSeller) { %><span class="product-label badge-best">Bán chạy</span><% } %>
+                                <% if (product.isHot) { %><span class="product-label badge-hot">Hot</span><% } %>
+                                <% if (product.categoryId?.slug === 'qua-halloween') { %><span class="product-label badge-halloween">Halloween</span><% } %>
+                            </div>
+                            <span class="product-emoji" role="img" aria-label="<%= product.name %>"><%= product.image %></span>
+                            <span class="card-bat" aria-hidden="true">🦇</span>
+                        </div>
+                        <div class="product-info">
+                            <span class="category"><%= product.categoryId?.name || 'SweetShop' %></span>
+                            <h3 title="<%= product.name %>"><%= product.name %></h3>
+                            <p class="product-excerpt"><%= product.shortDescription || product.description %></p>
+                            <div class="product-stats">
+                                <span class="rating-score">★ <%= Number(product.rating || 0).toFixed(1) %> <small>(<%= product.reviewCount || 0 %>)</small></span>
+                                <span class="sold-count"><%= (product.soldCount || 0).toLocaleString('vi-VN') %> đã bán</span>
+                            </div>
+                            <div class="product-bottom">
+                                <strong><%= product.price.toLocaleString('vi-VN') %>đ</strong>
+                                <span class="stock"><%= product.stock > 0 ? `Còn ${product.stock}` : 'Hết hàng' %></span>
+                            </div>
+                            <div class="product-actions">
+                                <a class="btn-card btn-outline" href="/products/<%= product.slug %>">Xem chi tiết</a>
+                                <form action="/cart/add" method="post">
+                                    <input type="hidden" name="productId" value="<%= product._id %>">
+                                    <button class="btn-card btn-orange" type="submit" <%= product.stock < 1 ? 'disabled' : '' %>>Thêm vào giỏ</button>
+                                </form>
+                            </div>
+                        </div>
+                    </article>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="empty-state"><span>👻</span><h2>Chưa có sản phẩm</h2><p>Danh mục này đang chờ những món ngon mới.</p></div>
+        <% } %>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

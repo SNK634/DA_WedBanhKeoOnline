@@ -1,0 +1,28 @@
+<%- include('../partials/header') %>
+
+<section class="order-success-section">
+    <div class="success-card">
+        <div class="success-icon" aria-hidden="true">✓</div>
+        <span class="section-kicker">Đặt hàng thành công</span>
+        <h1>Cảm ơn bạn đã ghé SweetShop!</h1>
+        <p>Mã đơn của bạn là <strong>#<%= order._id %></strong>. Trạng thái hiện tại: <span class="status-pill"><%= orderStatusLabels[order.orderStatus] %></span></p>
+        <% if (order.isDemo) { %><div class="alert demo-checkout-notice">Đây là đơn mô phỏng trong session. Không có dữ liệu được ghi vào MongoDB và không có tiền được thanh toán thật.</div><% } %>
+        <div class="success-payment">
+            <span>Người nhận</span><strong><%= order.customerInfo.fullName %></strong>
+            <span>Địa chỉ giao hàng</span><strong><%= order.customerInfo.address %>, <%= order.customerInfo.ward %>, <%= order.customerInfo.district %>, <%= order.customerInfo.city %></strong>
+            <span>Phương thức</span><strong><%= paymentLabels[order.paymentMethod] %></strong>
+            <span>Trạng thái thanh toán</span><strong><%= paymentStatusLabels[order.paymentStatus] %></strong>
+            <span>Trạng thái đơn hàng</span><strong><%= orderStatusLabels[order.orderStatus] %></strong>
+            <span>Tổng thanh toán</span><strong><%= order.totalAmount.toLocaleString('vi-VN') %>đ</strong>
+        </div>
+        <div class="success-items">
+            <% order.items.forEach((item) => { %>
+                <div><span><%= item.image %></span><strong><%= item.name %> × <%= item.quantity %></strong><span><%= item.subtotal.toLocaleString('vi-VN') %>đ</span></div>
+            <% }) %>
+        </div>
+        <div class="success-actions"><a class="btn btn-primary" href="/orders/<%= order._id %>">Xem chi tiết đơn</a><a class="btn btn-secondary" href="/products">Tiếp tục mua sắm</a></div>
+        <span class="success-ghost" aria-hidden="true">👻</span>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

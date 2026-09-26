@@ -1,0 +1,127 @@
+<%- include('../partials/header') %>
+
+<section class="page-hero compact-hero checkout-hero">
+    <div class="container">
+        <span class="page-hero-icon" aria-hidden="true">🕯️</span>
+        <span class="section-kicker">Bước cuối của cuộc săn kẹo</span>
+        <h1>Thanh toán</h1>
+        <p>Kiểm tra thông tin nhận hàng và chọn cách thanh toán phù hợp.</p>
+    </div>
+</section>
+
+<section class="section checkout-section">
+    <div class="container">
+        <% if (isDemoMode) { %>
+            <div class="alert demo-checkout-notice" role="status">
+                🎃 Chế độ demo: đơn hàng mô phỏng chỉ lưu trong phiên hiện tại, không được ghi vào MongoDB và không phát sinh thanh toán thật.
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-error" role="alert"><%= error %></div>
+        <% } %>
+
+        <form class="checkout-layout" action="/checkout" method="post">
+            <div class="checkout-main">
+                <section class="checkout-card">
+                    <div class="checkout-card-heading">
+                        <span>👻</span>
+                        <div><small>Thông tin giao hàng</small><h2>Người nhận</h2></div>
+                    </div>
+                    <div class="checkout-fields">
+                        <label class="field-full">Họ và tên
+                            <input name="fullName" value="<%= formData.fullName %>" autocomplete="name" required>
+                        </label>
+                        <label>Email
+                            <input name="email" type="email" value="<%= formData.email %>" autocomplete="email" required>
+                        </label>
+                        <label>Số điện thoại
+                            <input name="phone" value="<%= formData.phone %>" autocomplete="tel" placeholder="0901234567" required>
+                        </label>
+                        <label class="field-full">Địa chỉ
+                            <input name="address" value="<%= formData.address %>" autocomplete="street-address" placeholder="Số nhà, tên đường" required>
+                        </label>
+                        <label>Tỉnh / Thành phố
+                            <input name="city" value="<%= formData.city %>" required>
+                        </label>
+                        <label>Quận / Huyện
+                            <input name="district" value="<%= formData.district %>" required>
+                        </label>
+                        <label>Phường / Xã
+                            <input name="ward" value="<%= formData.ward %>" required>
+                        </label>
+                        <label class="field-full">Ghi chú
+                            <textarea name="note" rows="3" placeholder="Lời nhắn cho SweetShop hoặc người giao hàng"><%= formData.note %></textarea>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="checkout-card">
+                    <div class="checkout-card-heading">
+                        <span>💳</span>
+                        <div><small>Chọn một phương thức</small><h2>Thanh toán</h2></div>
+                    </div>
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="cod" <%= formData.paymentMethod === 'cod' ? 'checked' : '' %>>
+                            <span class="payment-icon">📦</span>
+                            <span><strong>Thanh toán khi nhận hàng</strong><small>Thanh toán bằng tiền mặt khi nhận hàng.</small></span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="momo" <%= formData.paymentMethod === 'momo' ? 'checked' : '' %>>
+                            <span class="payment-icon">📱</span>
+                            <span><strong>Ví MoMo — mô phỏng</strong><small>Nút đặt hàng bên cạnh đóng vai trò xác nhận MoMo, không mở cổng thanh toán thật.</small></span>
+                        </label>
+                        <label class="payment-option bank-option">
+                            <input type="radio" name="paymentMethod" value="bank" <%= formData.paymentMethod === 'bank' ? 'checked' : '' %>>
+                            <span class="payment-icon">🏦</span>
+                            <span><strong>Chuyển khoản — mô phỏng</strong><small>MB Bank · SWEETSHOP DEMO · 0123456789. Nội dung: SWEETSHOP + mã đơn hàng.</small></span>
+                            <span class="qr-placeholder" aria-label="Mã QR minh họa">QR<br><small>DEMO</small></span>
+                        </label>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="checkout-summary">
+                <div class="summary-heading"><span>🎃</span><div><small>Đơn hàng của bạn</small><h2>Tóm tắt</h2></div></div>
+                <div class="checkout-items">
+                    <% items.forEach((item) => { %>
+                        <div class="checkout-item">
+                            <span class="checkout-item-image"><%= item.image %></span>
+                            <div><strong><%= item.name %></strong><small><%= item.quantity %> × <%= item.price.toLocaleString('vi-VN') %>đ</small></div>
+                            <strong><%= item.subtotal.toLocaleString('vi-VN') %>đ</strong>
+                        </div>
+                    <% }) %>
+                </div>
+                <div class="checkout-totals">
+                    <div><span>Tổng sản phẩm</span><strong><%= items.reduce((sum, item) => sum + item.quantity, 0) %></strong></div>
+                    <div><span>Tạm tính</span><strong><%= subtotal.toLocaleString('vi-VN') %>đ</strong></div>
+                    <div><span>Phí vận chuyển</span><strong><%= shippingFee ? `${shippingFee.toLocaleString('vi-VN')}đ` : 'Miễn phí' %></strong></div>
+                    <div class="grand-total"><span>Tổng thanh toán</span><strong><%= totalAmount.toLocaleString('vi-VN') %>đ</strong></div>
+                </div>
+                <button class="btn btn-primary place-order-button" id="place-order-button" type="submit"><%= isDemoMode ? 'Đặt đơn mô phỏng' : 'Đặt hàng' %></button>
+                <p>Giá và tồn kho được kiểm tra lại trên server trước khi tạo đơn.</p>
+            </aside>
+        </form>
+    </div>
+</section>
+
+<script>
+    (() => {
+        const button = document.getElementById('place-order-button');
+        const options = document.querySelectorAll('input[name="paymentMethod"]');
+        const demoMode = <%- JSON.stringify(isDemoMode) %>;
+        const labels = {
+            cod: demoMode ? 'Đặt đơn COD mô phỏng' : 'Đặt hàng COD',
+            momo: 'Xác nhận thanh toán MoMo',
+            bank: 'Xác nhận chuyển khoản'
+        };
+        const updateLabel = () => {
+            const selected = document.querySelector('input[name="paymentMethod"]:checked');
+            if (selected) button.textContent = labels[selected.value];
+        };
+        options.forEach((option) => option.addEventListener('change', updateLabel));
+        updateLabel();
+    })();
+</script>
+
+<%- include('../partials/footer') %>

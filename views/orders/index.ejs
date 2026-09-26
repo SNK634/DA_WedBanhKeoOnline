@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+
+<section class="page-hero compact-hero orders-hero">
+    <div class="container"><span class="page-hero-icon">📜</span><span class="section-kicker">Lịch sử mua sắm</span><h1>Đơn hàng của tôi</h1><p>Theo dõi những hộp bánh kẹo đang trên đường đến bạn.</p></div>
+</section>
+
+<section class="section orders-section">
+    <div class="container">
+        <% if (isDemoMode) { %><div class="alert demo-checkout-notice">Các đơn bên dưới là dữ liệu mô phỏng trong phiên hiện tại và không lưu vào MongoDB.</div><% } %>
+        <% if (orders.length) { %>
+            <div class="order-list">
+                <% orders.forEach((order) => { %>
+                    <article class="order-card">
+                        <div class="order-card-head">
+                            <div><small>Mã đơn</small><strong>#<%= order._id %></strong></div>
+                            <span class="status-pill"><%= orderStatusLabels[order.orderStatus] %></span>
+                        </div>
+                        <div class="order-preview">
+                            <div class="order-emojis"><% order.items.slice(0, 4).forEach((item) => { %><span><%= item.image %></span><% }) %></div>
+                            <div><small><%= new Date(order.createdAt).toLocaleString('vi-VN') %></small><p><%= order.items.reduce((sum, item) => sum + item.quantity, 0) %> sản phẩm · <%= paymentLabels[order.paymentMethod] %> · <%= paymentStatusLabels[order.paymentStatus] %></p></div>
+                            <strong><%= order.totalAmount.toLocaleString('vi-VN') %>đ</strong>
+                            <a class="btn-card btn-outline" href="/orders/<%= order._id %>">Xem chi tiết</a>
+                        </div>
+                    </article>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="empty-state"><span>🕸️</span><h2>Chưa có đơn hàng</h2><p>Chiếc giỏ Halloween vẫn đang chờ những món ngon đầu tiên.</p><a class="btn btn-primary" href="/products">Chọn sản phẩm</a></div>
+        <% } %>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

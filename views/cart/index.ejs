@@ -1,0 +1,61 @@
+<%- include('../partials/header') %>
+
+<section class="page-hero cart-hero compact-hero">
+    <div class="container">
+        <span class="page-hero-icon" aria-hidden="true">🎃</span>
+        <span class="section-kicker">Giỏ kẹo của bạn</span>
+        <h1>Giỏ hàng</h1>
+        <p>Tăng, giảm hoặc chọn lại những món ngon trước khi thanh toán.</p>
+    </div>
+</section>
+
+<section class="section cart-section">
+    <div class="container">
+        <% if (cartError) { %>
+            <div class="alert alert-error" role="alert"><%= cartError %></div>
+        <% } %>
+
+        <% if (items.length) { %>
+            <div class="cart-layout">
+                <div class="cart-list">
+                    <% items.forEach((item) => { %>
+                        <article class="cart-item">
+                            <div class="cart-item-image"><span><%= item.product.image %></span></div>
+                            <div class="cart-item-info">
+                                <a href="/products/<%= item.product.slug %>"><h2><%= item.product.name %></h2></a>
+                                <span class="cart-unit-price"><%= item.product.price.toLocaleString('vi-VN') %>đ / sản phẩm</span>
+                            </div>
+                            <div class="quantity-control" aria-label="Số lượng <%= item.product.name %>">
+                                <form action="/cart/update/<%= item.product._id %>" method="post">
+                                    <input type="hidden" name="quantity" value="<%= item.quantity - 1 %>">
+                                    <button type="submit" aria-label="Giảm số lượng">−</button>
+                                </form>
+                                <strong><%= item.quantity %></strong>
+                                <form action="/cart/update/<%= item.product._id %>" method="post">
+                                    <input type="hidden" name="quantity" value="<%= item.quantity + 1 %>">
+                                    <button type="submit" aria-label="Tăng số lượng" <%= item.quantity >= item.product.stock ? 'disabled' : '' %>>+</button>
+                                </form>
+                            </div>
+                            <strong class="cart-line-total"><%= (item.product.price * item.quantity).toLocaleString('vi-VN') %>đ</strong>
+                            <form action="/cart/remove/<%= item.product._id %>" method="post">
+                                <button class="remove-item" type="submit" aria-label="Xóa <%= item.product.name %>">×</button>
+                            </form>
+                        </article>
+                    <% }) %>
+                </div>
+                <aside class="cart-summary">
+                    <span class="summary-icon" aria-hidden="true">👻</span>
+                    <h2>Tóm tắt đơn hàng</h2>
+                    <div><span>Số lượng</span><strong><%= items.reduce((sum, item) => sum + item.quantity, 0) %> sản phẩm</strong></div>
+                    <div class="summary-total"><span>Tổng tiền</span><strong><%= total.toLocaleString('vi-VN') %>đ</strong></div>
+                    <a class="btn btn-primary checkout-button" href="/checkout">Tiến hành thanh toán</a>
+                    <p>Miễn phí vận chuyển cho đơn từ 500.000đ.</p>
+                </aside>
+            </div>
+        <% } else { %>
+            <div class="empty-state cart-empty"><span>🕸️</span><h2>Giỏ hàng đang trống</h2><p>Hãy chọn một vài món ngon cho đêm Halloween nhé.</p><a class="btn btn-primary" href="/products">Khám phá sản phẩm</a></div>
+        <% } %>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,114 @@
+<%- include('../partials/header') %>
+
+<section class="section detail-section">
+    <div class="container detail-grid">
+        <div class="detail-visual">
+            <div class="spider-web detail-web" aria-hidden="true"></div>
+            <div class="product-badges detail-badges">
+                <% if (product.isBestSeller) { %><span class="product-label badge-best">Bán chạy</span><% } %>
+                <% if (product.isHot) { %><span class="product-label badge-hot">Hot</span><% } %>
+                <% if (product.categoryId?.slug === 'qua-halloween') { %><span class="product-label badge-halloween">Halloween</span><% } %>
+            </div>
+            <span class="detail-emoji" role="img" aria-label="<%= product.name %>"><%= product.image %></span>
+            <span class="detail-bat" aria-hidden="true">🦇</span>
+        </div>
+        <div class="detail-content">
+            <% if (typeof dataNotice === 'string' && dataNotice) { %>
+                <div class="demo-notice detail-notice" role="status">⚠ <%= dataNotice %></div>
+            <% } %>
+            <a class="back-link" href="/products">← Quay lại sản phẩm</a>
+            <span class="section-kicker"><%= product.categoryId?.name || 'SweetShop' %></span>
+            <h1><%= product.name %></h1>
+            <p><%= product.shortDescription || product.description %></p>
+            <strong class="detail-price"><%= product.price.toLocaleString('vi-VN') %>đ</strong>
+            <div class="detail-meta">
+                <span>Kho: <strong><%= product.stock %></strong></span>
+                <span>★ <strong><%= Number(product.rating || 0).toFixed(1) %></strong> (<%= product.reviewCount || 0 %> đánh giá)</span>
+                <span><strong><%= (product.soldCount || 0).toLocaleString('vi-VN') %></strong> đã bán</span>
+                <span><%= product.stock > 0 ? '✓ Còn hàng' : 'Hết hàng' %></span>
+            </div>
+            <form action="/cart/add" method="post">
+                <input type="hidden" name="productId" value="<%= product._id %>">
+                <button class="btn btn-primary" type="submit" <%= product.stock < 1 ? 'disabled' : '' %>>Thêm vào giỏ hàng</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<section class="product-detail-information">
+    <div class="container">
+        <div class="section-heading detail-heading">
+            <span class="section-kicker">Tìm hiểu món ngon</span>
+            <h2>Thông tin chi tiết sản phẩm</h2>
+        </div>
+
+        <div class="detail-card-grid">
+            <article class="information-card information-overview">
+                <div class="information-card-title"><span aria-hidden="true">🏷️</span><h3>Thông tin sản phẩm</h3></div>
+                <dl class="spec-list">
+                    <div><dt>Thương hiệu</dt><dd><%= product.brand %></dd></div>
+                    <div><dt>Xuất xứ</dt><dd><%= product.origin %></dd></div>
+                    <div><dt>Danh mục</dt><dd><%= product.categoryId?.name || 'SweetShop' %></dd></div>
+                    <div><dt>Trọng lượng</dt><dd><%= product.weight %></dd></div>
+                    <div><dt>Hạn sử dụng</dt><dd><%= product.expiry %></dd></div>
+                    <div><dt>Tồn kho</dt><dd><%= product.stock %> sản phẩm</dd></div>
+                </dl>
+            </article>
+
+            <article class="information-card">
+                <div class="information-card-title"><span aria-hidden="true">🌾</span><h3>Thành phần</h3></div>
+                <div class="information-copy"><h4>Nguyên liệu chính</h4><p><%= product.ingredients %></p></div>
+                <div class="information-copy allergen-copy"><h4>Cảnh báo dị ứng</h4><p><%= product.allergen %></p></div>
+            </article>
+
+            <article class="information-card">
+                <div class="information-card-title"><span aria-hidden="true">📖</span><h3>Hướng dẫn</h3></div>
+                <div class="information-copy"><h4>Cách sử dụng</h4><p><%= product.usage %></p></div>
+                <div class="information-copy"><h4>Cách bảo quản</h4><p><%= product.storage %></p></div>
+            </article>
+
+            <article class="information-card description-card">
+                <div class="information-card-title"><span aria-hidden="true">🎃</span><h3>Mô tả chi tiết</h3></div>
+                <p><%= product.description %></p>
+                <div class="description-highlights">
+                    <span>★ <%= Number(product.rating || 0).toFixed(1) %> điểm</span>
+                    <span><%= product.reviewCount || 0 %> lượt đánh giá</span>
+                    <span><%= (product.soldCount || 0).toLocaleString('vi-VN') %> lượt bán</span>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="reviews-section">
+    <div class="container">
+        <div class="section-heading heading-row reviews-heading">
+            <div>
+                <span class="section-kicker">Khách hàng nói gì?</span>
+                <h2>Đánh giá sản phẩm</h2>
+            </div>
+            <div class="review-summary"><strong>★ <%= Number(product.rating || 0).toFixed(1) %></strong><span><%= product.reviewCount || 0 %> lượt đánh giá</span></div>
+        </div>
+
+        <% const visibleReviews = Array.isArray(product.reviews) ? product.reviews : []; %>
+        <% if (visibleReviews.length) { %>
+            <div class="review-grid">
+                <% visibleReviews.forEach((review) => { %>
+                    <article class="review-card">
+                        <div class="review-author">
+                            <span class="review-avatar"><%= review.userName.charAt(0).toUpperCase() %></span>
+                            <div><strong><%= review.userName %></strong><span>Đã mua hàng</span></div>
+                            <time datetime="<%= new Date(review.createdAt).toISOString() %>"><%= new Date(review.createdAt).toLocaleDateString('vi-VN') %></time>
+                        </div>
+                        <div class="review-stars" aria-label="<%= review.rating %> trên 5 sao"><%= '★'.repeat(review.rating) %><%= '☆'.repeat(5 - review.rating) %></div>
+                        <p><%= review.comment %></p>
+                    </article>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="empty-state"><span>💬</span><p>Sản phẩm chưa có đánh giá hiển thị.</p></div>
+        <% } %>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

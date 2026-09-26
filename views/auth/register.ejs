@@ -1,0 +1,40 @@
+<%- include('../partials/header') %>
+
+<section class="auth-section">
+    <div class="spider-web spider-web-form" aria-hidden="true"></div>
+    <div class="auth-card auth-card-wide">
+        <div class="auth-icon" aria-hidden="true">🎃</div>
+        <span class="section-kicker">Gia nhập đêm hội</span>
+        <h1>Tạo tài khoản</h1>
+        <p class="auth-intro">Đăng ký để lưu phiên mua sắm và nhận những món quà ngọt ngào.</p>
+
+        <% if (error) { %>
+            <div class="alert alert-error" role="alert"><%= error %></div>
+        <% } %>
+
+        <form class="auth-form" action="/register" method="post">
+            <label for="fullName">Họ và tên</label>
+            <input id="fullName" name="fullName" type="text" value="<%= formData.fullName %>" autocomplete="name" minlength="2" maxlength="100" placeholder="Nguyễn Văn A" required>
+
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" value="<%= formData.email %>" autocomplete="email" placeholder="ban@example.com" required>
+
+            <div class="form-row">
+                <div>
+                    <label for="password">Mật khẩu</label>
+                    <input id="password" name="password" type="password" autocomplete="new-password" minlength="6" placeholder="Ít nhất 6 ký tự" required>
+                </div>
+                <div>
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="6" placeholder="Nhập lại mật khẩu" required>
+                </div>
+            </div>
+
+            <button class="btn btn-primary form-submit" type="submit">Đăng ký</button>
+        </form>
+
+        <p class="auth-switch">Đã có tài khoản? <a href="/login">Đăng nhập</a></p>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

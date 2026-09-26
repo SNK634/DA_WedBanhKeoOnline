@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+
+<section class="error-page">
+    <div class="error-card">
+        <span class="error-ghost" aria-hidden="true">👻</span>
+        <strong><%= statusCode %></strong>
+        <h1><%= pageTitle %></h1>
+        <p><%= message %></p>
+        <a class="btn btn-primary" href="/">Về trang chủ</a>
+    </div>
+</section>
+
+<%- include('partials/footer') %>

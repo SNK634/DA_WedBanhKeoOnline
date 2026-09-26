@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SweetShop - Thế giới bánh kẹo ngọt ngào, tươi ngon và đầy màu sắc.">
+    <title><%= typeof pageTitle !== 'undefined' ? `${pageTitle} | SweetShop` : 'SweetShop | Bánh kẹo Halloween ngọt ngào' %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <% const activePath = typeof currentPath === 'string' && currentPath ? currentPath : '/'; %>
+    <% const viewer = typeof currentUser !== 'undefined' ? currentUser : null; %>
+    <% const cartCount = typeof cartItemCount === 'number' ? cartItemCount : 0; %>
+    <header class="site-header">
+        <span class="header-bat header-bat-left" aria-hidden="true">🦇</span>
+        <span class="header-bat header-bat-right" aria-hidden="true">🦇</span>
+        <div class="container nav-wrapper">
+            <a class="brand" href="/" aria-label="SweetShop - Trang chủ">
+                <span class="brand-icon" aria-hidden="true">🎃</span>
+                <span>Sweet<span>Shop</span></span>
+            </a>
+
+            <input class="nav-toggle" type="checkbox" id="nav-toggle" aria-label="Mở menu điều hướng">
+            <label class="nav-toggle-label" for="nav-toggle" aria-hidden="true">
+                <span></span><span></span><span></span>
+            </label>
+
+            <nav class="main-nav" aria-label="Điều hướng chính">
+                <a class="<%= activePath === '/' ? 'active' : '' %>" href="/">Trang chủ</a>
+                <a class="<%= activePath.startsWith('/products') ? 'active' : '' %>" href="/products">Sản phẩm</a>
+                <a class="<%= activePath.startsWith('/cart') ? 'active' : '' %>" href="/cart">Giỏ hàng <span class="cart-count"><%= cartCount %></span></a>
+                <% if (viewer) { %>
+                    <a class="<%= activePath.startsWith('/orders') ? 'active' : '' %>" href="/orders">Đơn hàng của tôi</a>
+                    <span class="user-greeting">Xin chào, <strong><%= viewer.fullName %></strong></span>
+                    <form class="logout-form" action="/logout" method="post">
+                        <button class="login-link nav-button" type="submit">Đăng xuất</button>
+                    </form>
+                <% } else { %>
+                    <a href="/register">Đăng ký</a>
+                    <a class="login-link <%= activePath === '/login' ? 'active' : '' %>" href="/login">Đăng nhập</a>
+                <% } %>
+            </nav>
+        </div>
+    </header>
+
+    <main>
